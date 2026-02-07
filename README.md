@@ -1,0 +1,2 @@
+# brainrot-memo
+memo sounds 
