@@ -642,14 +642,13 @@
     (() => {
         // ====== Файлы ======
         // Звуки: sounds/sound1.wav ... sounds/sound17.wav
-        // Призы: assets/winner.png и assets/winner.wav (положи рядом в папку assets/)
         const ASSET = {
             soundDir: 'sounds/',
             soundPrefix: 'sound',
             soundExt: '.wav',
             maxSounds: 17,
 
-            winnerImage: 'images/winner1.png',
+            winnerImages: ['images/winner1.png', 'images/winner2.png', 'images/winner3.png', 'images/winner4.png'],
             winnerSound: 'sounds/winner.wav',
             matchSound: 'sounds/match.wav',
         };
@@ -1059,7 +1058,7 @@
             const tie = winners.length > 1;
 
             $('#winnerTitle').textContent = tie ? '🤝 Ничья!' : `🏆 Победитель: ${winners[0].name}`;
-            $('#winnerImg').src = ASSET.winnerImage;
+            $('#winnerImg').src = shuffle(ASSET.winnerImages)[0];
 
             const lines = [];
             if (tie){
