@@ -660,6 +660,7 @@
         let audioCtx = null;
         let masterGain = null;
         const audioBuffers = new Map(); // url -> AudioBuffer
+        const imageCache = new Map();
         let audioEnabled = false;
 
         function $(sel){ return document.querySelector(sel); }
@@ -697,6 +698,33 @@
                 document.body.appendChild(p);
                 p.addEventListener('animationend', () => p.remove());
             }
+        }
+
+        function preloadImage(url){
+            return new Promise((resolve, reject) => {
+                if (imageCache.has(url)) {
+                    resolve(imageCache.get(url));
+                    return;
+                }
+
+                const img = new Image();
+
+                img.onload = () => {
+                    imageCache.set(url, img);
+                    resolve(img);
+                };
+
+                img.onerror = reject;
+
+                img.src = url;
+            });
+        }
+
+        async function preloadWinnerImages(){
+            const promises = ASSET.winnerImages.map(url =>
+                preloadImage(url).catch(() => {})
+            );
+            await Promise.all(promises);
         }
 
         async function preloadAllSoundsWithProgress(){
@@ -758,6 +786,7 @@
             audioEnabled = true;
             setAudioUI('on');
             preloadAllSoundsWithProgress().catch(()=>{});
+            preloadWinnerImages().catch(()=>{});
 
             // если уже идёт игра — подгрузим буферы
             if (game.phase === 'playing'){
@@ -1094,7 +1123,11 @@
             const tie = winners.length > 1;
 
             $('#winnerTitle').textContent = tie ? '🤝 Ничья!' : `🏆 Победитель: ${winners[0].name}`;
-            $('#winnerImg').src = shuffle(ASSET.winnerImages)[0];
+            const img = ASSET.winnerImages[
+                Math.floor(Math.random() * ASSET.winnerImages.length)
+                ];
+
+            $('#winnerImg').src = img;
 
             const lines = [];
             if (tie){
