@@ -506,6 +506,9 @@
             <div class="chip"><span id="audioDot" class="dot warn"></span>Звук: <b id="audioStatus">выключен</b></div>
             <button class="btn primary" id="enableAudioBtn">🔊 Включить звук</button>
             <button class="btn danger" id="resetBtn" title="Сбросить игру">↩️ Сброс</button>
+            <div class="chip" id="preloadChip" style="display:none;">
+                ⏳ Загрузка звуков: <b id="preloadPct">0%</b>
+            </div>
         </div>
     </div>
 
@@ -696,6 +699,38 @@
             }
         }
 
+        async function preloadAllSoundsWithProgress(){
+            if (!audioEnabled) return;
+
+            const chip = $('#preloadChip');
+            const pct = $('#preloadPct');
+            chip.style.display = 'inline-flex';
+            pct.textContent = '0%';
+
+            const total = ASSET.maxSounds + 2; // 17 + winner + match
+            let done = 0;
+
+            const update = () => {
+                const p = Math.floor((done / total) * 100);
+                pct.textContent = `${p}%`;
+            };
+
+            // список url
+            const urls = [];
+            for (let i=1; i<=ASSET.maxSounds; i++) urls.push(soundUrl(i));
+            urls.push(ASSET.winnerSound, ASSET.matchSound);
+
+            // грузим последовательно (так стабильнее и прогресс честный)
+            for (const url of urls){
+                try { await loadBuffer(url); } catch(_) {}
+                done++;
+                update();
+            }
+
+            await wait(200);
+            chip.style.display = 'none';
+        }
+
         function setAudioUI(state){
             const dot = $('#audioDot');
             const text = $('#audioStatus');
@@ -722,6 +757,7 @@
             if (audioCtx.state !== 'running') await audioCtx.resume();
             audioEnabled = true;
             setAudioUI('on');
+            preloadAllSoundsWithProgress().catch(()=>{});
 
             // если уже идёт игра — подгрузим буферы
             if (game.phase === 'playing'){
