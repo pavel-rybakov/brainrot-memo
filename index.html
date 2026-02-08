@@ -1,0 +1,1214 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Sound Memo для детей</title>
+    <style>
+        :root{
+            --bg1:#f7fbff;
+            --bg2:#fff7fb;
+
+            --card:#ffffff;
+            --line:#e6eef7;
+
+            --text:#15202b;
+            --muted:#5b6b7a;
+
+            --blue:#2f6feb;
+            --green:#16a34a;
+            --red:#ef4444;
+            --yellow:#f59e0b;
+
+            --shadow: 0 16px 40px rgba(20, 60, 120, .14);
+            --shadow2: 0 10px 24px rgba(20, 60, 120, .10);
+
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        }
+
+        *{ box-sizing:border-box; }
+        html, body{ height:100%; }
+        body{
+            margin:0;
+            color:var(--text);
+            background:
+                    radial-gradient(1000px 700px at 15% 0%, rgba(47,111,235,.12) 0%, transparent 50%),
+                    radial-gradient(1000px 700px at 85% 0%, rgba(239,68,68,.10) 0%, transparent 55%),
+                    linear-gradient(180deg, var(--bg1), var(--bg2));
+        }
+
+        /* Layout */
+        .wrap{ max-width:1100px; margin:0 auto; padding:22px; }
+        .grid{
+            display:grid;
+            grid-template-columns: 380px 1fr;
+            gap:16px;
+            align-items:start;
+        }
+        @media (max-width: 980px){ .grid{ grid-template-columns:1fr; } }
+
+        /* Top */
+        .top{
+            display:flex;
+            align-items:flex-end;
+            justify-content:space-between;
+            gap:14px;
+            margin-bottom:16px;
+        }
+        h1{
+            margin:0;
+            font-size:24px;
+            letter-spacing:-.2px;
+        }
+        .muted{ color:var(--muted); font-size:14px; }
+
+        .status{
+            display:flex;
+            gap:10px;
+            flex-wrap:wrap;
+            align-items:center;
+            justify-content:flex-end;
+        }
+
+        /* Chips */
+        .chip{
+            display:inline-flex;
+            align-items:center;
+            gap:8px;
+            padding:9px 12px;
+            border:1px solid var(--line);
+            border-radius:999px;
+            background: rgba(255,255,255,.75);
+            box-shadow: var(--shadow2);
+            font-size:13px;
+        }
+        .dot{
+            width:10px; height:10px;
+            border-radius:999px;
+            background: #cbd5e1;
+            box-shadow: inset 0 0 0 2px rgba(255,255,255,.7);
+        }
+        .dot.ok{ background: var(--green); }
+        .dot.warn{ background: var(--yellow); }
+        .dot.bad{ background: var(--red); }
+
+        /* Cards */
+        .card{
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 22px;
+            box-shadow: var(--shadow);
+            overflow:hidden;
+        }
+        .card .hd{
+            padding:14px 16px;
+            border-bottom: 1px solid var(--line);
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:10px;
+            background: linear-gradient(180deg, rgba(47,111,235,.05), rgba(255,255,255,1));
+        }
+        .card .hd b{ font-size:15px; }
+        .card .bd{ padding:16px; }
+
+        /* Buttons */
+        .btn{
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            gap:10px;
+            padding:11px 14px;
+            border-radius: 14px;
+            border: 1px solid var(--line);
+            background: #fff;
+            box-shadow: var(--shadow2);
+            cursor:pointer;
+            user-select:none;
+            transition: transform .06s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease;
+            font-weight:800;
+        }
+        .btn:hover{ background:#f7fbff; }
+        .btn:active{ transform: translateY(1px); box-shadow: 0 8px 16px rgba(20,60,120,.10); }
+        .btn:disabled{ opacity:.55; cursor:not-allowed; }
+        .btn.primary{
+            background: linear-gradient(180deg, rgba(47,111,235,.16), rgba(47,111,235,.10));
+            border-color: rgba(47,111,235,.28);
+        }
+        .btn.danger{
+            background: linear-gradient(180deg, rgba(239,68,68,.16), rgba(239,68,68,.08));
+            border-color: rgba(239,68,68,.25);
+        }
+        .btn.small{ padding:9px 12px; border-radius: 12px; font-weight:800; }
+
+        /* Setup visuals */
+        .hero{ display:grid; gap:12px; padding: 8px 0 2px; }
+        .banner{
+            border-radius: 18px;
+            border: 1px dashed rgba(47,111,235,.35);
+            background:
+                    radial-gradient(700px 250px at 30% 0%, rgba(47,111,235,.10) 0%, transparent 55%),
+                    radial-gradient(700px 250px at 70% 0%, rgba(239,68,68,.10) 0%, transparent 55%),
+                    #ffffff;
+            padding: 14px 14px;
+        }
+        .banner .title{
+            font-size: 16px;
+            font-weight: 900;
+            letter-spacing: -.2px;
+            display:flex;
+            align-items:center;
+            gap:10px;
+        }
+        .emoji{
+            width:34px; height:34px;
+            border-radius: 14px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            background: rgba(47,111,235,.10);
+            border: 1px solid rgba(47,111,235,.18);
+            font-size:18px;
+        }
+        .steps{ display:grid; gap:10px; }
+        .step{
+            display:flex;
+            gap:10px;
+            align-items:flex-start;
+            padding: 10px 12px;
+            border:1px solid var(--line);
+            border-radius: 16px;
+            background: #fff;
+        }
+        .step .n{
+            width:26px; height:26px;
+            border-radius: 10px;
+            background: rgba(47,111,235,.12);
+            border:1px solid rgba(47,111,235,.18);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-weight:900;
+            color: var(--blue);
+            flex:0 0 auto;
+        }
+
+        /* Form fields */
+        .row{ display:flex; flex-wrap:wrap; gap:10px; }
+        .fieldGrid{
+            display:grid;
+            grid-template-columns: 1fr 1fr;
+            gap:10px;
+            margin-top: 10px;
+        }
+        @media (max-width: 450px){ .fieldGrid{ grid-template-columns:1fr; } }
+        .field{ display:flex; flex-direction:column; gap:6px; }
+
+        label{ font-size: 13px; color: var(--muted); }
+        input[type="number"], input[type="text"], textarea{
+            width:100%;
+            border:1px solid var(--line);
+            border-radius: 14px;
+            padding: 11px 12px;
+            font-size: 15px;
+            outline:none;
+            background: #fff;
+        }
+        input:focus, textarea:focus{
+            border-color: rgba(47,111,235,.35);
+            box-shadow: 0 0 0 4px rgba(47,111,235,.10);
+        }
+
+        .nameTags{ display:flex; flex-wrap:wrap; gap:8px; margin-top: 8px; }
+        .tag{
+            padding: 7px 10px;
+            border-radius: 999px;
+            border:1px solid var(--line);
+            background: rgba(47,111,235,.06);
+            font-size: 13px;
+            font-weight: 900;
+            color: var(--blue);
+            display:flex;
+            align-items:center;
+            gap:8px;
+        }
+        .tag .x{
+            width:18px; height:18px;
+            border-radius: 8px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            border: 1px solid rgba(47,111,235,.22);
+            background:#fff;
+            cursor:pointer;
+            font-size: 12px;
+            line-height: 1;
+        }
+
+        /* Errors */
+        .error{
+            margin-top: 8px;
+            padding: 10px 12px;
+            border-radius: 14px;
+            border:1px solid rgba(239,68,68,.25);
+            background: rgba(239,68,68,.08);
+            color: #8a1f1f;
+            font-size: 13px;
+            display:none;
+        }
+
+        /* Score */
+        .scores{ display:flex; flex-direction:column; gap:10px; }
+        .player{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:10px;
+            padding: 12px 12px;
+            border:1px solid var(--line);
+            border-radius: 18px;
+            background: #fff;
+        }
+        .player.active{
+            border-color: rgba(47,111,235,.35);
+            box-shadow: 0 0 0 4px rgba(47,111,235,.08);
+            background: rgba(47,111,235,.04);
+        }
+        .player .left{ display:flex; align-items:center; gap:10px; }
+        .avatar{
+            width: 34px; height: 34px;
+            border-radius: 14px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            border:1px solid var(--line);
+            background: linear-gradient(180deg, rgba(255,255,255,1), rgba(47,111,235,.06));
+            font-size: 18px;
+        }
+        .player .name{ font-weight: 900; }
+        .player .score{
+            padding: 7px 10px;
+            border-radius: 999px;
+            border:1px solid var(--line);
+            background: #fff;
+            font-weight: 900;
+            min-width: 80px;
+            text-align:center;
+        }
+
+        /* pills in score */
+        .metaRow{ display:flex; gap:10px; flex-wrap:wrap; margin-top: 12px; }
+        .pill{
+            padding: 9px 12px;
+            border-radius: 999px;
+            border:1px solid var(--line);
+            background: #fff;
+            box-shadow: var(--shadow2);
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        /* Board */
+        .boardWrap{ padding: 14px 16px 16px; }
+        .board{
+            display:grid;
+            gap: 12px;
+            grid-template-columns: repeat(6, minmax(46px, 1fr));
+        }
+        @media (max-width: 520px){
+            .board{ grid-template-columns: repeat(4, minmax(46px, 1fr)); }
+        }
+
+        /* === FLIP TILE SYSTEM (matches your renderBoard markup) === */
+        .tile{
+            appearance: none;
+            -webkit-appearance: none;
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            padding: 0;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            user-select: none;
+            perspective: 900px;
+        }
+        .tile:disabled{ opacity:.65; cursor:not-allowed; }
+
+        .tileInner{
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 260ms ease;
+            border-radius: 18px;
+            will-change: transform;
+        }
+        .tile.revealed .tileInner,
+        .tile.matched .tileInner{
+            transform: rotateY(180deg);
+        }
+
+        .tileFace{
+            position:absolute;
+            inset:0;
+            border-radius: 18px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            backface-visibility:hidden;
+            -webkit-backface-visibility:hidden;
+            border:1px solid var(--line);
+            box-shadow: var(--shadow2);
+            overflow:hidden;
+        }
+
+        /* front */
+        .tileFront{
+            background:
+                    radial-gradient(60px 40px at 30% 20%, rgba(47,111,235,.12), transparent 60%),
+                    radial-gradient(60px 40px at 70% 20%, rgba(239,68,68,.10), transparent 60%),
+                    #fff;
+        }
+
+        /* back */
+        .tileBack{
+            transform: rotateY(180deg);
+            background:
+                    radial-gradient(60px 40px at 30% 20%, rgba(47,111,235,.18), transparent 60%),
+                    #fff;
+        }
+
+        /* IMPORTANT: подсветка НЕ для всех revealed, а только для active (1-2 текущих) */
+        .tile.revealed .tileBack{
+            /* просто перевёрнута, без свечения */
+            border-color: var(--line);
+            box-shadow: var(--shadow2);
+        }
+        .tile.active .tileBack{
+            border-color: rgba(47,111,235,.35);
+            box-shadow: 0 0 0 5px rgba(47,111,235,.10), var(--shadow2);
+        }
+
+        /* matched: зелёная подсветка */
+        .tile.matched .tileBack{
+            border-color: rgba(22,163,74,.35);
+            box-shadow: 0 0 0 5px rgba(22,163,74,.12), var(--shadow2);
+            background:
+                    radial-gradient(60px 40px at 30% 20%, rgba(22,163,74,.16), transparent 60%),
+                    #fff;
+        }
+
+        /* small icon */
+        .tileIcon{
+            width: 46px;
+            height: 46px;
+            border-radius: 18px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            border: 1px solid var(--line);
+            background: rgba(255,255,255,.9);
+            box-shadow: 0 10px 18px rgba(20,60,120,.10);
+            font-size: 26px;
+        }
+
+        /* Particles */
+        .particle{
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            border-radius: 4px;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: .95;
+            animation: pop 650ms ease-out forwards;
+            box-shadow: 0 10px 18px rgba(0,0,0,.10);
+        }
+        @keyframes pop{
+            0%   { transform: translate(0,0) scale(1) rotate(0deg); opacity: 1; }
+            100% { transform: translate(var(--dx), var(--dy)) scale(.6) rotate(240deg); opacity: 0; }
+        }
+
+        /* Modal */
+        .backdrop{
+            position:fixed;
+            inset:0;
+            background: rgba(8, 20, 40, .42);
+            display:none;
+            align-items:center;
+            justify-content:center;
+            padding: 18px;
+            z-index:999;
+        }
+        .backdrop.show{ display:flex; }
+
+        .modal{
+            width: min(820px, 100%);
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 22px;
+            box-shadow: 0 30px 80px rgba(0,0,0,.22);
+            overflow:hidden;
+        }
+        .modal .hd{
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--line);
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:10px;
+            background: linear-gradient(180deg, rgba(22,163,74,.08), #fff);
+        }
+        .modal .bd{ padding: 16px; }
+
+        .big{
+            font-size: 18px;
+            font-weight: 900;
+            letter-spacing: -.2px;
+        }
+
+        .winnerGrid{
+            display:grid;
+            grid-template-columns: 1.1fr .9fr;
+            gap: 14px;
+            align-items:start;
+        }
+        @media (max-width: 860px){ .winnerGrid{ grid-template-columns:1fr; } }
+
+        .winnerImg{
+            width:100%;
+            max-height: 340px;
+            object-fit: contain;
+            border:1px solid var(--line);
+            border-radius: 18px;
+            background: #fff;
+            box-shadow: var(--shadow2);
+        }
+
+        .note{
+            padding: 12px 12px;
+            border-radius: 18px;
+            border: 1px solid var(--line);
+            background: rgba(22,163,74,.06);
+            color: #155b2a;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <div class="top">
+        <div>
+            <h1>🎧 Sound Memo</h1>
+            <div class="muted">Игра “найди пару”, но вместо картинок — <b>звуки</b>. Для детей 🙂</div>
+        </div>
+        <div class="status">
+            <div class="chip"><span id="audioDot" class="dot warn"></span>Звук: <b id="audioStatus">выключен</b></div>
+            <button class="btn primary" id="enableAudioBtn">🔊 Включить звук</button>
+            <button class="btn danger" id="resetBtn" title="Сбросить игру">↩️ Сброс</button>
+        </div>
+    </div>
+
+    <div class="grid">
+        <!-- Left: setup or score -->
+        <div class="card">
+            <div class="hd">
+                <b id="leftTitle">Давай настроим игру!</b>
+                <button class="btn small" id="testBtn">🎶 Проверить звуки</button>
+            </div>
+            <div class="bd">
+                <!-- Setup -->
+                <div id="setupView">
+                    <div class="hero">
+                        <div class="banner">
+                            <div class="title"><span class="emoji">🧠</span>Память + слух = суперсила!</div>
+                        </div>
+
+                        <div class="steps">
+                            <div class="step">
+                                <div class="n">1</div>
+                                <div>
+                                    <b>Выбери игроков</b>
+                                    <div class="muted">Можно играть одному или всей семьёй.</div>
+                                </div>
+                            </div>
+                            <div class="step">
+                                <div class="n">2</div>
+                                <div>
+                                    <b>Выбери сложность</b>
+                                    <div class="muted">Это количество разных звуков (пар).</div>
+                                </div>
+                            </div>
+                            <div class="step">
+                                <div class="n">3</div>
+                                <div>
+                                    <b>Нажми “Поехали!”</b>
+                                    <div class="muted">И открывай карточки — слушай и запоминай.</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="fieldGrid">
+                            <div class="field">
+                                <label>Игроков</label>
+                                <input id="playersCount" type="number" min="1" max="6" value="2" />
+                            </div>
+                            <div class="field">
+                                <label>Звуков (пар)</label>
+                                <input id="soundsCount" type="number" min="2" max="17" value="8" />
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label>Добавь имена (кнопкой) — это веселее 🙂</label>
+                            <div class="row" style="gap:10px; align-items:center;">
+                                <input id="nameInput" type="text" placeholder="Например: Лёва" />
+                                <button class="btn" id="addNameBtn">➕ Добавить</button>
+                            </div>
+                            <div class="nameTags" id="nameTags"></div>
+                            <div class="muted" style="margin-top:6px;">
+                                Подсказка: если имён меньше, чем игроков — недостающие будут “Player 1, Player 2…”
+                            </div>
+                        </div>
+
+                        <div class="row" style="gap:12px; margin-top: 4px;">
+                            <button class="btn primary" id="startBtn">🚀 Поехали!</button>
+                        </div>
+
+                        <div class="error" id="setupError"></div>
+
+                        <div class="muted" style="margin-top:8px;">
+                            Важно: звук в браузере включается только после клика по кнопке “Включить звук”.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Score -->
+                <div id="scoreView" style="display:none;">
+                    <div class="scores" id="scoresList"></div>
+                    <div class="metaRow">
+                        <div class="pill" id="pairsLeftPill">Пар осталось: —</div>
+                        <div class="pill" id="turnPill">Ход: —</div>
+                    </div>
+                    <div class="metaRow">
+                        <button class="btn" id="replayLastBtn" disabled>🔁 Повторить звук</button>
+                        <button class="btn" id="peekBtn">👀 Быстрый взгляд</button>
+                    </div>
+                    <div class="muted" style="margin-top:10px;">
+                        Если пара совпала — получаешь очко и ходишь ещё. Если нет — ход переходит следующему.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: board -->
+        <div class="card">
+            <div class="hd">
+                <b>Поле</b>
+                <div class="muted">Кликаешь карточку → слышишь звук</div>
+            </div>
+            <div class="bd boardWrap">
+                <div id="board" class="board"></div>
+                <div class="muted" style="margin-top:10px;">
+                    Совет: играйте с колонкой/наушниками — так проще отличать звуки 🎧
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Winner Modal -->
+<div class="backdrop" id="winnerBackdrop">
+    <div class="modal">
+        <div class="hd">
+            <div class="big" id="winnerTitle">🎉 Победа!</div>
+            <button class="btn" id="closeWinnerBtn">Закрыть</button>
+        </div>
+        <div class="bd">
+            <div class="winnerGrid">
+                <div>
+                    <img class="winnerImg" id="winnerImg" alt="winner" />
+                </div>
+                <div style="display:flex; flex-direction:column; gap:12px;">
+                    <div class="note" id="winnerText"></div>
+                    <button class="btn" id="restartBtn">🔁 Играть ещё раз</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (() => {
+        // ====== Файлы ======
+        // Звуки: sounds/sound1.wav ... sounds/sound17.wav
+        // Призы: assets/winner.png и assets/winner.wav (положи рядом в папку assets/)
+        const ASSET = {
+            soundDir: 'sounds/',
+            soundPrefix: 'sound',
+            soundExt: '.wav',
+            maxSounds: 17,
+
+            winnerImage: 'images/winner1.png',
+            winnerSound: 'sounds/winner.wav',
+            matchSound: 'sounds/match.wav',
+        };
+
+        // ====== WebAudio (быстро и без лагов) ======
+        let audioCtx = null;
+        let masterGain = null;
+        const audioBuffers = new Map(); // url -> AudioBuffer
+        let audioEnabled = false;
+
+        function $(sel){ return document.querySelector(sel); }
+        function show(el, yes){ el.style.display = yes ? '' : 'none'; }
+        function clamp(n,a,b){ return Math.max(a, Math.min(b,n)); }
+        function wait(ms){ return new Promise(r => setTimeout(r, ms)); }
+        function escapeHtml(s){
+            return String(s).replace(/[&<>"']/g, m => ({
+                '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+            }[m]));
+        }
+        function spawnParticlesFromElement(el){
+            const r = el.getBoundingClientRect();
+            const cx = r.left + r.width/2;
+            const cy = r.top + r.height/2;
+
+            const count = 14;
+            for (let i=0; i<count; i++){
+                const p = document.createElement('div');
+                p.className = 'particle';
+
+                // случайный разброс
+                const dx = (Math.random()*2 - 1) * 180;
+                const dy = (Math.random()*2 - 1) * 160 - 60;
+
+                p.style.left = (cx - 5) + 'px';
+                p.style.top  = (cy - 5) + 'px';
+                p.style.setProperty('--dx', dx.toFixed(0)+'px');
+                p.style.setProperty('--dy', dy.toFixed(0)+'px');
+
+                // цвет — без заданной палитры, из набора
+                const colors = ['#2f6feb', '#16a34a', '#f59e0b', '#ef4444', '#a855f7'];
+                p.style.background = colors[(Math.random()*colors.length)|0];
+
+                document.body.appendChild(p);
+                p.addEventListener('animationend', () => p.remove());
+            }
+        }
+
+        function setAudioUI(state){
+            const dot = $('#audioDot');
+            const text = $('#audioStatus');
+            if (state === 'on'){
+                dot.className = 'dot ok';
+                text.textContent = 'включен';
+                $('#enableAudioBtn').disabled = true;
+                $('#enableAudioBtn').textContent = '🔊 Звук включён';
+            } else {
+                dot.className = 'dot warn';
+                text.textContent = 'выключен';
+                $('#enableAudioBtn').disabled = false;
+                $('#enableAudioBtn').textContent = '🔊 Включить звук';
+            }
+        }
+
+        async function enableAudio(){
+            if (!audioCtx){
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                masterGain = audioCtx.createGain();
+                masterGain.gain.value = 0.95;
+                masterGain.connect(audioCtx.destination);
+            }
+            if (audioCtx.state !== 'running') await audioCtx.resume();
+            audioEnabled = true;
+            setAudioUI('on');
+
+            // если уже идёт игра — подгрузим буферы
+            if (game.phase === 'playing'){
+                preloadSounds(game.soundsCount).catch(()=>{});
+            }
+        }
+
+        function soundUrl(i){
+            return `${ASSET.soundDir}${ASSET.soundPrefix}${i}${ASSET.soundExt}`;
+        }
+
+        async function loadBuffer(url){
+            if (audioBuffers.has(url)) return audioBuffers.get(url);
+
+            const res = await fetch(url, { cache: 'no-store' }); // на время дебага
+            if (!res.ok) throw new Error(`Не могу загрузить ${url} (HTTP ${res.status})`);
+
+            const arr = await res.arrayBuffer();
+
+            // Безопасный лог: длина файла и первые 12 байт (RIFF/WAVE заголовок)
+            try {
+                const u8 = new Uint8Array(arr);
+                const head = Array.from(u8.slice(0, 12)).map(b => b.toString(16).padStart(2,'0')).join('');
+                console.log('[SOUND]', url, 'bytes=', u8.length, 'head=', head);
+            } catch (_) {}
+
+            const buf = await audioCtx.decodeAudioData(arr);
+            audioBuffers.set(url, buf);
+            return buf;
+        }
+
+        async function playUrl(url, { volume=1.0 } = {}){
+            if (!audioEnabled) throw new Error('Сначала нажми “Включить звук” (браузер так устроен).');
+            const buf = await loadBuffer(url);
+            const src = audioCtx.createBufferSource();
+            src.buffer = buf;
+
+            const g = audioCtx.createGain();
+            g.gain.value = volume;
+            src.playbackRate.value = 0.96 + Math.random() * 0.08;
+
+            src.connect(g);
+            g.connect(masterGain);
+
+            src.start();
+            return src;
+        }
+
+        async function playWinnerSoundImmediate(){
+            await wait(200);
+            try {
+                if (!audioEnabled) return; // звук не включён
+                await playUrl(ASSET.winnerSound, { volume: 1.0 });
+                game.lastPlayedUrl = ASSET.winnerSound;
+                $('#replayLastBtn').disabled = false;
+            } catch(e) {
+                console.log('winner sound error', e);
+            }
+        }
+
+        async function playMatchCelebration(){
+            // вибрация (только на устройствах, где поддерживается)
+            try {
+                if (navigator.vibrate) navigator.vibrate([35, 30, 55]);
+            } catch (_) {}
+
+            // небольшой "ding"
+            try {
+                await playUrl(ASSET.matchSound, { volume: 0.6 });
+            } catch (_) {
+                // если файла нет или звук не включен — просто молча пропускаем
+            }
+        }
+
+        async function preloadSounds(n){
+            const urls = [];
+            for (let i=1; i<=n; i++) urls.push(soundUrl(i));
+            await Promise.all(urls.map(u => loadBuffer(u)));
+        }
+
+        // ====== Setup UI (interactive names) ======
+        const nameState = {
+            names: []
+        };
+
+        function renderNameTags(){
+            const wrap = $('#nameTags');
+            wrap.innerHTML = '';
+            nameState.names.forEach((nm, idx) => {
+                const tag = document.createElement('div');
+                tag.className = 'tag';
+                tag.innerHTML = `
+        <span>👤 ${escapeHtml(nm)}</span>
+        <span class="x" title="Удалить" aria-label="Удалить">✕</span>
+      `;
+                tag.querySelector('.x').addEventListener('click', () => {
+                    nameState.names.splice(idx, 1);
+                    renderNameTags();
+                });
+                wrap.appendChild(tag);
+            });
+        }
+
+        function addName(){
+            const input = $('#nameInput');
+            const nm = (input.value || '').trim();
+            if (!nm) return;
+            // не добавляем дубли
+            if (nameState.names.some(x => x.toLowerCase() === nm.toLowerCase())) {
+                showSetupError('Такое имя уже есть 🙂');
+                return;
+            }
+            nameState.names.push(nm);
+            input.value = '';
+            renderNameTags();
+        }
+
+        function showSetupError(msg){
+            const box = $('#setupError');
+            box.textContent = msg;
+            box.style.display = 'block';
+        }
+        function clearSetupError(){
+            const box = $('#setupError');
+            box.textContent = '';
+            box.style.display = 'none';
+        }
+
+        // ====== Game state ======
+        const game = {
+            phase: 'setup', // setup | playing | finished
+            players: [],
+            currentPlayer: 0,
+            soundsCount: 8,
+            tiles: [],
+            firstPick: null,
+            secondPick: null,
+            lock: false,
+            pairsLeft: 0,
+            lastPlayedUrl: null,
+        };
+
+        const avatars = shuffle(['🦊','🐼','🐯','🦁','🐸','🐵','🐰','🐨','🐶','🐱']);
+
+        function shuffle(arr){
+            for (let i = arr.length-1; i>0; i--){
+                const j = Math.floor(Math.random()*(i+1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function bestCols(n){
+            let best=6, bestScore=Infinity;
+            for (let c=4; c<=8; c++){
+                const r = Math.ceil(n/c);
+                const score = Math.abs(r-c) + (n%c===0?0:0.25);
+                if (score < bestScore){ bestScore=score; best=c; }
+            }
+            return best;
+        }
+
+        function makeTiles(soundsCount) {
+            const allSounds = [];
+
+            for (let i = 1; i <= ASSET.maxSounds; i++) {
+                allSounds.push(i);
+            }
+
+            shuffle(allSounds);
+
+            const selected = allSounds.slice(0, soundsCount);
+
+            const ids = [];
+            for (const s of selected) {
+                ids.push(s, s);
+            }
+            shuffle(ids);
+            return ids.map((soundIndex, idx) => ({
+                id: idx,
+                soundIndex,
+                matched: false,
+                revealed: false
+            }));
+        }
+
+        function renderScores(){
+            const wrap = $('#scoresList');
+            wrap.innerHTML = '';
+            game.players.forEach((p, i) => {
+                const row = document.createElement('div');
+                row.className = 'player' + (i===game.currentPlayer ? ' active' : '');
+                row.innerHTML = `
+        <div class="left">
+          <div class="avatar">${p.avatar}</div>
+          <div>
+            <div class="name">${escapeHtml(p.name)}</div>
+            <div class="muted" style="font-size:12px;">очки</div>
+          </div>
+        </div>
+        <div class="score">${p.score} ⭐</div>
+      `;
+                wrap.appendChild(row);
+            });
+
+            $('#pairsLeftPill').textContent = `Пар осталось: ${game.pairsLeft}`;
+            $('#turnPill').textContent = `Ход: ${game.players[game.currentPlayer]?.name ?? '—'}`;
+        }
+
+        function renderBoard() {
+            const board = $('#board');
+            board.innerHTML = '';
+            const cols = bestCols(game.tiles.length);
+            board.style.gridTemplateColumns = `repeat(${cols}, minmax(46px, 1fr))`;
+
+            game.tiles.forEach((t, idx) => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                const isActive = (idx === game.firstPick || idx === game.secondPick);
+                btn.className = 'tile' +
+                    (t.matched ? ' matched' : '') +
+                    (t.revealed ? ' revealed' : '') +
+                    (isActive ? ' active' : '') +
+                    (game.lock ? ' disabled' : '');
+                btn.disabled = game.lock || t.matched;
+
+                // Иконки: закрытая карточка = ❓, открытая = 🔊, совпала = ✅
+                const frontIcon = '❓';
+                const backIcon = t.matched ? '✅' : '🔊';
+                btn.innerHTML = `
+  <div class="tileInner">
+    <div class="tileFace tileFront">
+      <div class="tileIcon">${frontIcon}</div>
+    </div>
+    <div class="tileFace tileBack">
+      <div class="tileIcon">${backIcon}</div>
+    </div>
+  </div>
+`;
+                btn.addEventListener('click', () => onTileClick(idx));
+                board.appendChild(btn);
+            });
+        }
+
+        async function onTileClick(idx){
+            if (game.phase !== 'playing') return;
+            if (game.lock) return;
+
+            const t = game.tiles[idx];
+            if (t.matched || t.revealed) return;
+
+            t.revealed = true;
+            renderBoard();
+
+            const url = soundUrl(t.soundIndex);
+            try{
+                await playUrl(url);
+                game.lastPlayedUrl = url;
+                $('#replayLastBtn').disabled = false;
+            }catch(e){
+                // покажем в настройках/слева, но не ломаем игру
+                showSetupError(e.message);
+            }
+
+            if (game.firstPick === null){
+                game.firstPick = idx;
+                return;
+            }
+            if (game.secondPick === null){
+                game.secondPick = idx;
+                await resolveTurn();
+            }
+        }
+
+        async function resolveTurn(){
+            const a = game.tiles[game.firstPick];
+            const b = game.tiles[game.secondPick];
+            game.lock = true;
+            renderBoard();
+
+            await wait(520);
+
+            if (a.soundIndex === b.soundIndex) {
+
+                try {
+                    const tiles = document.querySelectorAll('.tile');
+                    if (typeof spawnParticlesFromElement === 'function') {
+                        spawnParticlesFromElement(tiles[game.firstPick]);
+                        spawnParticlesFromElement(tiles[game.secondPick]);
+                    }
+                } catch (_) {}
+
+                await playMatchCelebration();
+
+
+
+                a.matched = true;
+                b.matched = true;
+                game.players[game.currentPlayer].score += 1;
+                game.pairsLeft -= 1;
+
+                game.firstPick = null;
+                game.secondPick = null;
+                game.lock = false;
+
+                renderScores();
+                renderBoard();
+
+                if (game.pairsLeft <= 0) finishGame();
+                return;
+            }
+
+            a.revealed = false;
+            b.revealed = false;
+
+            game.firstPick = null;
+            game.secondPick = null;
+            game.currentPlayer = (game.currentPlayer + 1) % game.players.length;
+
+            game.lock = false;
+            renderScores();
+            renderBoard();
+        }
+
+        function computeWinners(){
+            const max = Math.max(...game.players.map(p => p.score));
+            return game.players.filter(p => p.score === max);
+        }
+
+        function finishGame(){
+            game.phase = 'finished';
+
+            const winners = computeWinners();
+            const tie = winners.length > 1;
+
+            $('#winnerTitle').textContent = tie ? '🤝 Ничья!' : `🏆 Победитель: ${winners[0].name}`;
+            $('#winnerImg').src = ASSET.winnerImage;
+
+            const lines = [];
+            if (tie){
+                lines.push(`<b>Победила дружба!</b>`);
+                lines.push(`Победители: ${winners.map(w => `<b>${escapeHtml(w.name)}</b>`).join(', ')}`);
+            } else {
+                lines.push(`<b>${escapeHtml(winners[0].name)}</b> победил(а)!`);
+            }
+            lines.push(`Счёт: ${game.players.map(p => `${escapeHtml(p.name)} — <b>${p.score}</b>`).join(' · ')}`);
+            lines.push(`<div style="margin-top:8px;">Нажми кнопку ниже — получишь призовой звук 🎁</div>`);
+            $('#winnerText').innerHTML = lines.join('<br/>');
+
+            $('#winnerBackdrop').classList.add('show');
+            playWinnerSoundImmediate();
+        }
+
+        // ====== Start / Reset ======
+        function readSetup(){
+            const playersCount = clamp(parseInt($('#playersCount').value || '2', 10), 1, 6);
+            const soundsCount = clamp(parseInt($('#soundsCount').value || '8', 10), 2, ASSET.maxSounds);
+
+            const players = [];
+            for (let i=0; i<playersCount; i++){
+                const name = nameState.names[i] || `Player ${i+1}`;
+                players.push({ name, score:0, avatar: avatars[i % avatars.length] });
+            }
+            return { playersCount, soundsCount, players };
+        }
+
+        function validateSetup(setup){
+            const errs = [];
+            if (setup.players.length < 1) errs.push('Нужен хотя бы 1 игрок.');
+            if (setup.soundsCount < 2) errs.push('Нужно минимум 2 звука (2 пары).');
+            if (setup.soundsCount > ASSET.maxSounds) errs.push(`Максимум звуков: ${ASSET.maxSounds}.`);
+
+            const lower = setup.players.map(p => p.name.toLowerCase());
+            const set = new Set(lower);
+            if (set.size !== lower.length) errs.push('Имена игроков должны быть уникальны 🙂');
+
+            return errs;
+        }
+
+        async function startGame(){
+            clearSetupError();
+            const setup = readSetup();
+            const errs = validateSetup(setup);
+            if (errs.length){
+                showSetupError(errs.join(' '));
+                return;
+            }
+
+            game.phase = 'playing';
+            game.players = setup.players;
+            game.currentPlayer = 0;
+            game.soundsCount = setup.soundsCount;
+            game.tiles = makeTiles(setup.soundsCount);
+            game.firstPick = null;
+            game.secondPick = null;
+            game.lock = false;
+            game.pairsLeft = setup.soundsCount;
+            game.lastPlayedUrl = null;
+
+            show($('#setupView'), false);
+            show($('#scoreView'), true);
+            $('#leftTitle').textContent = 'Счёт и ход';
+
+            renderScores();
+            renderBoard();
+
+            if (audioEnabled){
+                preloadSounds(game.soundsCount).catch(()=>{});
+            }
+        }
+
+        function resetAll(){
+            clearSetupError();
+            game.phase = 'setup';
+            game.players = [];
+            game.currentPlayer = 0;
+            game.tiles = [];
+            game.firstPick = null;
+            game.secondPick = null;
+            game.lock = false;
+            game.pairsLeft = 0;
+            game.lastPlayedUrl = null;
+
+            show($('#setupView'), true);
+            show($('#scoreView'), false);
+            $('#leftTitle').textContent = 'Давай настроим игру!';
+            $('#board').innerHTML = '';
+            $('#replayLastBtn').disabled = true;
+
+            // закрыть модалку если открыта
+            $('#winnerBackdrop').classList.remove('show');
+        }
+
+        // ====== Buttons ======
+        $('#enableAudioBtn').addEventListener('click', () => enableAudio().catch(e => showSetupError(e.message)));
+        $('#addNameBtn').addEventListener('click', addName);
+        $('#nameInput').addEventListener('keydown', (e) => { if (e.key === 'Enter'){ e.preventDefault(); addName(); }});
+
+        $('#startBtn').addEventListener('click', startGame);
+        $('#resetBtn').addEventListener('click', resetAll);
+
+        $('#testBtn').addEventListener('click', async () => {
+            clearSetupError();
+            const n = clamp(parseInt($('#soundsCount').value || '8', 10), 2, ASSET.maxSounds);
+            try{
+                if (!audioEnabled) await enableAudio();
+                for (let i=1; i<=n; i++){
+                    const url = soundUrl(i);
+                    await playUrl(url);
+                    game.lastPlayedUrl = url;
+                    $('#replayLastBtn').disabled = false;
+                    await wait(260);
+                }
+            }catch(e){
+                showSetupError(e.message);
+            }
+        });
+
+        $('#replayLastBtn').addEventListener('click', async () => {
+            if (!game.lastPlayedUrl) return;
+            try{ await playUrl(game.lastPlayedUrl); } catch(e){ showSetupError(e.message); }
+        });
+
+        $('#peekBtn').addEventListener('click', async () => {
+            if (game.phase !== 'playing') return;
+            // быстрый взгляд на 800мс
+            game.tiles.forEach(t => { if (!t.matched) t.revealed = true; });
+            renderBoard();
+            await wait(800);
+            game.tiles.forEach(t => { if (!t.matched) t.revealed = false; });
+            renderBoard();
+        });
+
+        $('#closeWinnerBtn').addEventListener('click', () => $('#winnerBackdrop').classList.remove('show'));
+        $('#winnerBackdrop').addEventListener('click', (e) => { if (e.target === $('#winnerBackdrop')) $('#winnerBackdrop').classList.remove('show'); });
+
+
+
+        $('#restartBtn').addEventListener('click', () => {
+            $('#winnerBackdrop').classList.remove('show');
+            resetAll();
+        });
+
+        // ====== Init ======
+        setAudioUI('off');
+    })();
+</script>
+</body>
+</html>
